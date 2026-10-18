@@ -1,0 +1,244 @@
+<!-- ===================================================================
+  POS Control · SKIN VISUAL "SOLAR"  (solo apariencia)
+  Pegar COMPLETO este bloque justo ANTES de la etiqueta </body> del HTML.
+  No modifica datos, fórmulas ni funciones: solo estilos y dos gráficos
+  que leen los mismos registros que ya guarda tu dashboard.
+==================================================================== -->
+<style id="sx-skin-css">
+/* ---------- Paleta y remapeo de variables originales ---------- */
+body{--sx-bg:#f5f6fa;--sx-card:#fff;--sx-card2:#f8f9fc;--sx-line:#e6e9f2;--sx-line2:#eef0f6;--sx-text:#1b2236;--sx-muted:#6a7389;--sx-prim:#4f55e6;--sx-primbg:#eef0ff;--sx-green:#12b76a;--sx-blue:#3b82f6;--sx-orange:#f79009;--sx-purple:#7a5af8;--sx-red:#f04438;--sx-yellow:#f5b301;--sx-shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.04);
+ --bg:var(--sx-bg);--panel:var(--sx-card);--panel2:var(--sx-card2);--line:var(--sx-line);--text:var(--sx-text);--muted:var(--sx-muted);--blue:var(--sx-prim);--cyan:var(--sx-blue);--green:var(--sx-green);--yellow:var(--sx-yellow);--red:var(--sx-red);--radius:14px;
+ background:var(--sx-bg);color:var(--sx-text);font-family:Inter,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body.theme-dark{--sx-bg:#0e121c;--sx-card:#161c2a;--sx-card2:#1b2233;--sx-line:#263047;--sx-line2:#212a3d;--sx-text:#e9edf6;--sx-muted:#9aa5bb;--sx-prim:#8b90f8;--sx-primbg:#232a4d;--sx-green:#32d583;--sx-blue:#5b9bff;--sx-orange:#fdb022;--sx-purple:#9b8afb;--sx-red:#f97066;--sx-yellow:#fec84b;--sx-shadow:none;
+ --bg:var(--sx-bg);--panel:var(--sx-card);--panel2:var(--sx-card2);--line:var(--sx-line);--text:var(--sx-text);--muted:var(--sx-muted);--blue:var(--sx-prim);--cyan:var(--sx-blue);--green:var(--sx-green);--yellow:var(--sx-yellow);--red:var(--sx-red);
+ background:var(--sx-bg)}
+
+/* ---------- Estructura: barra lateral + contenido ---------- */
+body .app{display:grid;grid-template-columns:228px minmax(0,1fr);column-gap:26px;align-items:start;max-width:1600px;padding:20px 26px}
+body .app>.top{grid-column:2;grid-row:1;margin-bottom:18px}
+body .app>.tabs{grid-column:1;grid-row:1/span 12;position:sticky;top:18px;flex-direction:column;flex-wrap:nowrap;gap:4px;margin:0;padding:14px 10px;background:var(--sx-card);border:1px solid var(--sx-line);border-radius:16px;box-shadow:var(--sx-shadow)}
+body .app>.tabs:before{content:"MENÚ";font-size:10px;letter-spacing:.14em;color:var(--sx-muted);font-weight:700;padding:2px 12px 8px}
+body .app>.page,body .app>.footer{grid-column:2}
+body .tab{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--sx-muted);border-radius:10px;padding:11px 12px;font-weight:650;font-size:13.5px;white-space:normal}
+body .tab:hover{background:var(--sx-card2);color:var(--sx-text)}
+body .tab.active{background:var(--sx-primbg);color:var(--sx-prim)}
+body .brand h1{font-size:20px;color:var(--sx-text)}body .brand h1 span{color:var(--sx-prim)!important}
+body .brand p{color:var(--sx-muted)}
+body .logo{background:linear-gradient(135deg,#6b70f0,#3b82f6);color:#fff;border-radius:12px;box-shadow:0 6px 16px rgba(79,85,230,.28)}
+body .status{background:var(--sx-card);border:1px solid var(--sx-line);color:var(--sx-muted);border-radius:999px}
+
+/* ---------- Tarjetas ---------- */
+body .card,body .metric,body .mini{background:var(--sx-card);border:1px solid var(--sx-line);border-radius:14px;box-shadow:var(--sx-shadow);color:var(--sx-text)}
+body .card{padding:18px}
+body .card h2{font-size:15px;font-weight:750;color:var(--sx-text)}body .card h3{color:var(--sx-text)}
+body .muted,body .metric .label,body .metric .foot,body .mini .k,body .mini .s,body .stress-sub,body .stress-label,body .stress-foot{color:var(--sx-muted)}
+
+/* ---------- Indicadores con ícono de color ---------- */
+body .metrics{grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
+body .metric{padding:16px}
+body .metric .icon{width:38px;height:38px;display:grid;place-items:center;border-radius:11px;font-size:18px;background:#eef2ff}
+body .metric:nth-child(1) .icon{background:#e8f0ff}body .metric:nth-child(2) .icon{background:#f0eaff}body .metric:nth-child(3) .icon{background:#fff1de}
+body .metric:nth-child(4) .icon{background:#e3f8ee}body .metric:nth-child(5) .icon{background:#ffe9e6}body .metric:nth-child(6) .icon{background:#e4f6fb}
+body.theme-dark .metric .icon{background:#232b40!important}
+body .metric .label{margin-top:12px;font-size:12px;font-weight:600}
+body .metric .num{font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--sx-text)}
+body .metric .foot{font-size:11.5px}
+body .quick-stats .mini{padding:16px}body .mini .v{font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--sx-text)}
+body .mini .k{font-weight:700;letter-spacing:.06em}
+
+/* ---------- Tarjeta principal (presión comercial) ---------- */
+body .stress-card:after{display:none}
+body .stress-title{font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--sx-text)}
+body .stress-meter{height:12px;background:var(--sx-line2);border-radius:999px}
+body .stress-meter span{border-radius:999px}
+body .stress-details,body .stress-part{background:var(--sx-card2);border:1px solid var(--sx-line);border-radius:12px;color:var(--sx-text)}
+body .stress-details summary,body .stress-part .part-math{background:transparent!important;color:var(--sx-text)}body .stress-part p,body .stress-details .detail-intro{color:var(--sx-muted)}
+body .hint{background:var(--sx-card2);border:1px solid var(--sx-line);color:var(--sx-muted);border-radius:12px}
+body .pill{background:#fff4d6;color:#b54708;border-radius:999px;font-weight:800}
+body .pill.green{background:#e3f8ee;color:#067647}body .pill.red{background:#ffe9e6;color:#b42318}
+body .forecast-box>div{background:var(--sx-card2);border:1px solid var(--sx-line);border-radius:12px}
+body .forecast-box strong{color:var(--sx-text);font-size:20px}body .forecast-box span{color:var(--sx-muted)}
+
+/* ---------- Barras de progreso ---------- */
+body .bar{background:var(--sx-line2);height:9px;border-radius:999px}
+body .bar span{border-radius:999px;background:linear-gradient(90deg,#7a5af8,#5b8def)}
+body .seller-progress .bar{height:9px}body .seller-progress strong{font-size:12px}
+body .barlabel{color:var(--sx-text)}body .barval{color:var(--sx-muted)}
+
+/* ---------- Tablas ---------- */
+body .table-wrap,body .seller-table-wrap{border:0;border-radius:12px}
+body table,body .seller-table{background:transparent;border-collapse:separate;border-spacing:0}
+body th,body .seller-table th{background:var(--sx-card2);color:var(--sx-muted);font-size:10.5px;letter-spacing:.07em;font-weight:700;padding:12px 14px;border-bottom:1px solid var(--sx-line)}
+body th:first-child{border-top-left-radius:10px}body th:last-child{border-top-right-radius:10px}
+body td,body .seller-table td{padding:14px;border-bottom:1px solid var(--sx-line2);color:var(--sx-text);font-size:12.5px;vertical-align:middle}
+body tbody tr:last-child td{border-bottom:0}
+body tbody tr:hover{background:var(--sx-card2)}
+body .seller-name{font-weight:700;color:var(--sx-text)}body .seller-sub{color:var(--sx-muted)}
+
+/* Ajuste de ancho con barra lateral: tablas a todo el ancho y encabezados que se parten en líneas */
+body .section-grid{grid-template-columns:minmax(0,1fr)}
+@media(min-width:1760px){body .section-grid{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
+body .seller-table{min-width:0}
+body th,body .seller-table th{white-space:normal;line-height:1.25;vertical-align:bottom;padding:12px 12px}
+body td,body .seller-table td{padding:13px 12px}
+body .seller-progress{min-width:130px}
+
+/* ---------- Etiquetas (semáforos) ---------- */
+body .tag{border-radius:999px;padding:4px 11px;font-size:11px;font-weight:750}
+body .tag.green{background:#e3f8ee;color:#067647}body .tag.yellow{background:#fff4d6;color:#b54708}body .tag.orange{background:#ffeadb;color:#b93815}
+body .tag.red{background:#ffe9e6;color:#b42318}body .tag.gray{background:var(--sx-line2);color:var(--sx-muted)}
+body.theme-dark .tag.green,body.theme-dark .pill.green{background:#12382a;color:#6ce9a6}body.theme-dark .tag.yellow,body.theme-dark .pill{background:#47370f;color:#fedf89}
+body.theme-dark .tag.orange{background:#4a2a12;color:#fdb022}body.theme-dark .tag.red,body.theme-dark .pill.red{background:#4a1f1b;color:#fda29b}
+
+/* ---------- Botones y formularios ---------- */
+body .btn{background:var(--sx-card);color:var(--sx-text);border:1px solid var(--sx-line);border-radius:10px;font-weight:650;box-shadow:var(--sx-shadow)}
+body .btn:hover{background:var(--sx-card2);filter:none}
+body .btn.primary{background:var(--sx-prim);border-color:var(--sx-prim);color:#fff;box-shadow:0 4px 12px rgba(79,85,230,.25)}
+body.theme-dark .btn.primary{color:#0e121c}
+body .btn.danger{background:#fff1ef;color:#b42318;border-color:#f6cfca}
+body.theme-dark .btn.danger{background:#3d1f1c;color:#fda29b;border-color:#5b2a26}
+body .actions .btn,body .seller-actions .btn{padding:5px 10px;font-size:11px;border-radius:8px}
+body .field label{color:var(--sx-muted)}
+body .field input,body .field select,body .field textarea{background:var(--sx-card);color:var(--sx-text);border:1px solid var(--sx-line);border-radius:10px}
+body .field input:focus,body .field select:focus,body .field textarea:focus{border-color:var(--sx-prim);box-shadow:0 0 0 3px color-mix(in srgb,var(--sx-prim) 18%,transparent)}
+body .notice.ok{background:#e3f8ee;color:#067647}body .notice.err{background:#ffe9e6;color:#b42318}body .notice.info{background:var(--sx-primbg);color:var(--sx-prim)}
+body .footer{color:var(--sx-muted)}
+
+/* ---------- Gráficos añadidos ---------- */
+.sx-charts{display:grid;grid-template-columns:1.65fr 1fr;gap:14px;margin-bottom:14px}
+.sx-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.sx-head h2{margin:0}.sx-sub{font-size:11.5px;color:var(--sx-muted)}
+.sx-seg{display:inline-flex;background:var(--sx-line2);border-radius:9px;padding:3px}
+.sx-seg button{border:0;background:transparent;color:var(--sx-muted);font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:7px}
+.sx-seg button.on{background:var(--sx-card);color:var(--sx-prim);box-shadow:var(--sx-shadow)}
+.sx-legend{display:flex;gap:14px;font-size:11.5px;color:var(--sx-muted);margin:2px 0 4px;flex-wrap:wrap}
+.sx-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.sx-svg{width:100%;height:auto;display:block}
+.sx-svg text{font:11px Inter,-apple-system,"Segoe UI",Arial,sans-serif;fill:var(--sx-muted)}
+.sx-donut{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:center;padding-top:6px}
+.sx-donut svg{width:176px;height:176px;flex:none}
+.sx-donut .big{font:800 26px Inter,-apple-system,Arial,sans-serif;fill:var(--sx-text)}.sx-donut .lab{font:600 11px Inter,Arial,sans-serif;fill:var(--sx-muted)}
+.sx-leg{flex:1;min-width:140px;display:grid;gap:9px}
+.sx-leg div{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--sx-text)}
+.sx-leg i{width:10px;height:10px;border-radius:50%;flex:none}.sx-leg b{margin-left:auto;font-weight:750}.sx-leg span{color:var(--sx-muted);min-width:38px;text-align:right}
+.sx-empty{font-size:12px;color:var(--sx-muted);text-align:center;padding:6px 0 0}
+
+/* ---------- Avatares en tablas de vendedores ---------- */
+.sx-who{display:flex;align-items:center;gap:11px}
+.sx-av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;flex:none}
+body.theme-dark .sx-av{filter:brightness(.82) saturate(.9)}
+
+/* ---------- Pantallas medianas y celular ---------- */
+@media(max-width:1180px){body .metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.sx-charts{grid-template-columns:1fr}}
+@media(max-width:980px){
+ body .app{display:block;padding:14px}
+ body .app>.tabs{position:static;flex-direction:row;overflow-x:auto;padding:8px;margin-bottom:14px;border-radius:14px}
+ body .app>.tabs:before{display:none}
+ body .tab{width:auto;white-space:nowrap;padding:9px 13px}
+ body .app>.top{margin-bottom:12px}
+}
+@media(max-width:650px){body .metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}body .metric .num{font-size:23px}body .card{padding:14px}.sx-donut svg{width:150px;height:150px}}
+
+/* ---------- Modo noche: contraste de piezas con reglas !important originales ---------- */
+body.theme-dark .card,body.theme-dark .metric,body.theme-dark .mini,body.theme-dark .status,body.theme-dark .stress-details,body.theme-dark .stress-part,body.theme-dark .forecast-box>div{background:var(--sx-card)!important;border-color:var(--sx-line)!important;color:var(--sx-text)!important}
+body.theme-dark .app>.tabs{background:var(--sx-card)!important}
+body.theme-dark .tab{background:transparent!important;color:var(--sx-muted)!important;border:0!important}
+body.theme-dark .tab.active{background:var(--sx-primbg)!important;color:var(--sx-prim)!important}
+body.theme-dark .btn{background:var(--sx-card)!important;color:var(--sx-text)!important;border-color:var(--sx-line)!important}
+body.theme-dark .btn.primary{background:var(--sx-prim)!important;border-color:var(--sx-prim)!important;color:#0e121c!important}
+body.theme-dark .btn.danger{background:#3d1f1c!important;color:#fda29b!important;border-color:#5b2a26!important}
+body.theme-dark table,body.theme-dark .table-wrap,body.theme-dark .seller-table-wrap,body.theme-dark #sellerBars .seller-table,body.theme-dark #sellerBars .seller-table-wrap{background:transparent!important;color:var(--sx-text)!important;border-color:var(--sx-line)!important}
+body.theme-dark table thead,body.theme-dark table thead tr,body.theme-dark table th,body.theme-dark .seller-table th,body.theme-dark #sellerBars .seller-table th{background:var(--sx-card2)!important;color:var(--sx-muted)!important;border-color:var(--sx-line)!important}
+body.theme-dark table tbody,body.theme-dark table tbody tr,body.theme-dark .seller-table tbody tr,body.theme-dark #sellerBars .seller-table tbody tr,body.theme-dark #sellerBars .seller-table thead tr{background:transparent!important;color:var(--sx-text)!important}
+body.theme-dark table tbody tr:nth-child(even),body.theme-dark .seller-table tbody tr:nth-child(even){background:transparent!important}
+body.theme-dark table tbody tr:hover,body.theme-dark table tbody tr:hover td,body.theme-dark .seller-table tbody tr:hover,body.theme-dark .seller-table tbody tr:hover td,body.theme-dark #sellerBars .seller-table tbody tr:hover,body.theme-dark #sellerBars .seller-table tbody tr:hover td{background:var(--sx-card2)!important;color:var(--sx-text)!important}
+body.theme-dark td,body.theme-dark #sellerBars .seller-table td{background-color:transparent!important;color:var(--sx-text)!important;border-bottom-color:var(--sx-line2)!important}
+body.theme-dark #sellerBars .seller-name{color:var(--sx-text)!important}body.theme-dark #sellerBars .seller-sub{color:var(--sx-muted)!important}
+body.theme-dark .field input,body.theme-dark .field select,body.theme-dark .field textarea,body.theme-dark #page-registros input,body.theme-dark #page-registros select,body.theme-dark #page-registros textarea,body.theme-dark #page-configuracion input,body.theme-dark #page-configuracion select,body.theme-dark #page-configuracion textarea{background:var(--sx-card2)!important;color:var(--sx-text)!important;border-color:var(--sx-line)!important}
+body.theme-dark .hint{background:var(--sx-card2)!important;color:var(--sx-muted)!important;border-color:var(--sx-line)!important}
+body.theme-dark .bar,body.theme-dark .stress-meter{background:var(--sx-line2)!important}
+body.theme-dark .barlabel,body.theme-dark .stress-details summary,body.theme-dark .stress-part .part-math,body.theme-dark .checkline{color:var(--sx-text)!important}
+body.theme-dark #modal>.card,body.theme-dark #modal #modalBody .card{background:var(--sx-card)!important;color:var(--sx-text)!important;border-color:var(--sx-line)!important}
+body.theme-dark #modal #modalBody .forecast-box>div,body.theme-dark #modal #modalBody .hint{background:var(--sx-card2)!important;color:var(--sx-text)!important;border-color:var(--sx-line)!important}
+#sellerReportPrint .card[style]{background:var(--sx-card2)!important}
+</style>
+
+<script id="sx-skin-js">
+/* Gráficos de la skin Solar: SOLO LECTURA de los registros guardados (localStorage "posControl.v1")
+   y de las cifras ya mostradas en pantalla. No escribe datos ni cambia ninguna fórmula. */
+(()=>{'use strict';
+if(window.__sxSkin)return;window.__sxSkin=true;
+const $=id=>document.getElementById(id),KEY='posControl.v1',NS='http://www.w3.org/2000/svg';
+const PAL=['#12b76a','#3b82f6','#f79009','#7a5af8','#f04438','#98a2b3'];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>new Intl.NumberFormat('es-CL',{maximumFractionDigits:1}).format(n||0);
+const numEs=t=>{t=String(t||'').replace(/[^\d.,-]/g,'');return t?(Number(t.replace(/\./g,'').replace(',','.'))||0):0};
+const getDb=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}};
+const curYm=()=>new Date().toLocaleDateString('en-CA').slice(0,7);
+let mode='acum';
+
+function build(db,ym){
+ const [y,m]=ym.split('-').map(Number),n=new Date(y,m,0).getDate(),per=new Array(n).fill(0),bySeller={};
+ (db.records||[]).forEach(r=>{const d=String(r.date||'');if(d.slice(0,7)!==ym)return;const day=+d.slice(8,10),v=Number(r.sales)||0;if(day>=1&&day<=n)per[day-1]+=v;bySeller[r.sellerId]=(bySeller[r.sellerId]||0)+v});
+ const cur=curYm(),last=ym===cur?new Date().getDate():(ym<cur?n:0);
+ return {n,per,last,bySeller};
+}
+function niceMax(v){if(v<=4)return 4;const p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p,s=f<=1.5?1.5:f<=2?2:f<=3?3:f<=4?4:f<=5?5:f<=7.5?7.5:10;return Math.ceil(s*p/4)*4}
+function areaSvg(S,goal){
+ const W=640,H=250,L=40,R=14,T=14,B=28,n=S.n;
+ const real=[];let c=0;for(let i=0;i<S.last;i++){c+=S.per[i];real.push(mode==='acum'?c:S.per[i])}
+ const goalAt=i=>mode==='acum'?goal*(i+1)/n:goal/n;
+ const maxReal=Math.max(0,...real),maxGoal=mode==='acum'?goal:goal/n,top=niceMax(Math.max(1,maxReal,maxGoal)*1.12);
+ const x=i=>L+(W-L-R)*(n>1?i/(n-1):0),y=v=>T+(H-T-B)*(1-v/top);
+ let g='';for(let k=0;k<=4;k++){const v=top*k/4,yy=y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--sx-line2)" stroke-width="1"/><text x="${L-8}" y="${yy+4}" text-anchor="end">${fmt(v)}</text>`}
+ let xs='';[1,5,10,15,20,25,n].filter((d,i,a)=>a.indexOf(d)===i&&d<=n).forEach(d=>{xs+=`<text x="${x(d-1)}" y="${H-8}" text-anchor="middle">${d}</text>`});
+ let line='',area='',dots='';
+ if(real.length){const pts=real.map((v,i)=>[x(i),y(v)]);line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');area=line+` L${pts[pts.length-1][0].toFixed(1)} ${y(0)} L${pts[0][0].toFixed(1)} ${y(0)} Z`;const lp=pts[pts.length-1];dots=`<circle cx="${lp[0]}" cy="${lp[1]}" r="4.5" fill="#fff" stroke="#3b82f6" stroke-width="2.5"><title>Día ${S.last}: ${fmt(real[real.length-1])} ventas</title></circle>`}
+ const gl=goal>0?(mode==='acum'?`<path d="M${x(0)} ${y(goalAt(0))} L${x(n-1)} ${y(goalAt(n-1))}" stroke="#12b76a" stroke-width="2" stroke-dasharray="6 5" fill="none"/>`:`<path d="M${x(0)} ${y(goal/n)} L${x(n-1)} ${y(goal/n)}" stroke="#12b76a" stroke-width="2" stroke-dasharray="6 5" fill="none"/>`):'';
+ return `<svg class="sx-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="Ventas del período"><defs><linearGradient id="sxg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b82f6" stop-opacity=".28"/><stop offset="1" stop-color="#3b82f6" stop-opacity="0"/></linearGradient></defs>${g}${xs}${gl}${area?`<path d="${area}" fill="url(#sxg)"/>`:''}${line?`<path d="${line}" fill="none" stroke="#3b82f6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`:''}${dots}</svg>`;
+}
+function donut(parts,total){
+ const R=62,C=2*Math.PI*R;let off=0,segs='';
+ if(total>0)parts.forEach((p,i)=>{const len=C*p.v/total;segs+=`<circle cx="88" cy="88" r="${R}" fill="none" stroke="${p.c}" stroke-width="24" stroke-dasharray="${Math.max(0,len-1.5).toFixed(2)} ${(C-Math.max(0,len-1.5)).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 88 88)"><title>${esc(p.name)}: ${fmt(p.v)}</title></circle>`;off+=len});
+ else segs=`<circle cx="88" cy="88" r="${R}" fill="none" stroke="var(--sx-line2)" stroke-width="24"/>`;
+ return `<svg viewBox="0 0 176 176" role="img" aria-label="Ventas por vendedor"><circle cx="88" cy="88" r="${R}" fill="none" stroke="var(--sx-line2)" stroke-width="24"/>${segs}<text class="big" x="88" y="90" text-anchor="middle">${fmt(total)}</text><text class="lab" x="88" y="108" text-anchor="middle">ventas</text></svg>`;
+}
+function ensure(){
+ if($('sxCharts'))return true;const host=document.querySelector('#page-dashboard .metrics');if(!host)return false;
+ const w=document.createElement('div');w.id='sxCharts';w.className='sx-charts';
+ w.innerHTML=`<article class="card"><div class="sx-head"><div><h2>Ventas del período</h2><div class="sx-sub" id="sxAreaSub"></div></div><div class="sx-seg" id="sxSeg"><button data-m="acum" class="on">Acumulado</button><button data-m="dia">Diario</button></div></div><div class="sx-legend"><span><i style="background:#3b82f6"></i>Ventas reales</span><span><i style="background:#12b76a"></i>Meta (ritmo lineal)</span></div><div id="sxArea"></div><div class="sx-empty" id="sxAreaEmpty"></div></article><article class="card"><div class="sx-head"><div><h2>Ventas por vendedor</h2><div class="sx-sub" id="sxDonutSub"></div></div></div><div class="sx-donut"><div id="sxDonut"></div><div class="sx-leg" id="sxLeg"></div></div></article>`;
+ host.insertAdjacentElement('afterend',w);
+ $('sxSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;mode=b.dataset.m;[...$('sxSeg').children].forEach(x=>x.classList.toggle('on',x===b));draw()});
+ return true;
+}
+function draw(){
+ if(!ensure())return;const db=getDb(),ym=($('dashboardPeriod')||{}).value||curYm(),S=build(db,ym),goal=numEs(($('fGoal')||{}).textContent);
+ $('sxArea').innerHTML=areaSvg(S,goal);
+ const total=S.per.reduce((a,b)=>a+b,0);
+ $('sxAreaSub').textContent=`${ym} · meta ${fmt(goal)} · ventas ${fmt(total)}`;
+ $('sxAreaEmpty').textContent=total===0?'Todavía no hay ventas registradas en este período.':'';
+ const names={};(db.sellers||[]).forEach(s=>names[s.id]=s.name);
+ let parts=Object.entries(S.bySeller).filter(([,v])=>v>0).map(([id,v])=>({name:names[id]||'Vendedor eliminado',v})).sort((a,b)=>b.v-a.v);
+ if(parts.length>5){const rest=parts.slice(5).reduce((a,p)=>a+p.v,0);parts=parts.slice(0,5);parts.push({name:'Otros',v:rest})}
+ parts.forEach((p,i)=>p.c=PAL[i%PAL.length]);const tot=parts.reduce((a,p)=>a+p.v,0);
+ $('sxDonut').innerHTML=donut(parts,tot);$('sxDonutSub').textContent=ym;
+ $('sxLeg').innerHTML=parts.length?parts.map(p=>`<div><i style="background:${p.c}"></i>${esc(p.name)}<b>${fmt(p.v)}</b><span>${fmt(p.v/tot*100)}%</span></div>`).join(''):'<div class="sx-sub">Sin ventas en el período.</div>';
+}
+function initials(s){const p=String(s).trim().split(/\s+/);return((p[0]||'')[0]||'').toUpperCase()+((p[1]||'')[0]||'').toUpperCase()}
+function hue(s){let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h}
+function decorate(){
+ document.querySelectorAll('#sellerBars .seller-table tbody td:first-child,#salesPaceTable tbody td:first-child,#sellersTable tbody td:first-child').forEach(td=>{
+  if(td.dataset.sx||td.colSpan>1)return;const name=(td.querySelector('.seller-name')?td.querySelector('.seller-name').textContent:td.textContent).trim();if(!name)return;td.dataset.sx='1';
+  const h=hue(name),wrap=document.createElement('div'),av=document.createElement('span'),tx=document.createElement('div');wrap.className='sx-who';av.className='sx-av';av.textContent=initials(name);av.style.background=`hsl(${h} 70% 91%)`;av.style.color=`hsl(${h} 55% 32%)`;
+  while(td.firstChild)tx.appendChild(td.firstChild);wrap.appendChild(av);wrap.appendChild(tx);td.appendChild(wrap);
+ });
+}
+let queued=false;const run=()=>{queued=false;draw();decorate()};const schedule=()=>{if(!queued){queued=true;requestAnimationFrame(run)}};
+function start(){
+ run();const obs=new MutationObserver(schedule);
+ ['fActual','fGoal','sellerBars','salesPaceTable','sellersTable','periodLabel'].map($).filter(Boolean).forEach(t=>obs.observe(t,{childList:true,subtree:true,characterData:true}));
+ const p=$('dashboardPeriod');if(p)p.addEventListener('change',schedule);window.addEventListener('storage',schedule);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(start,0));else setTimeout(start,0);
+})();
+</script>
