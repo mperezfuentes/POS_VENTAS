@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel Comercial · Dashboard Ejecutivo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script>if(typeof Chart==='undefined'){document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js"><\/script>')}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>if(typeof html2canvas==='undefined'){document.write('<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"><\/script>')}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>if(!window.jspdf){document.write('<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"><\/script>')}</script>
+<style>
+:root{
+  --bg:#F8FAFC; --surface:#FFFFFF; --surface-2:#F1F5F9; --text:#0F172A; --text-dim:#64748B;
+  --border:#E2E8F0; --accent:#2563EB; --accent-dim:#EFF6FF;
+  --green:#16A34A; --green-bg:#DCFCE7; --yellow:#CA8A04; --yellow-bg:#FEF9C3; --red:#DC2626; --red-bg:#FEE2E2;
+  --excellent:#0D9488; --excellent-bg:#CCFBF1;
+  --radius:14px; --shadow:0 4px 6px -1px rgba(0,0,0,0.04), 0 2px 4px -1px rgba(0,0,0,0.02);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0F19; --surface:#111827; --surface-2:#1F2937; --text:#F9FAFB; --text-dim:#9CA3AF;
+    --border:#374151; --accent:#3B82F6; --accent-dim:#1E3A8A;
+    --green:#4ADE80; --green-bg:#064E3B; --yellow:#FACC15; --yellow-bg:#422006; --red:#F87171; --red-bg:#7F1D1D;
+    --excellent:#2DD4BF; --excellent-bg:#042F2E;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0F19; --surface:#111827; --surface-2:#1F2937; --text:#F9FAFB; --text-dim:#9CA3AF;
+  --border:#374151; --accent:#3B82F6; --accent-dim:#1E3A8A;
+  --green:#4ADE80; --green-bg:#064E3B; --yellow:#FACC15; --yellow-bg:#422006; --red:#F87171; --red-bg:#7F1D1D;
+  --excellent:#2DD4BF; --excellent-bg:#042F2E;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+
+.wrap{max-width:1360px;margin:0 auto;padding:24px 20px 60px}
+
+/* Hero Header Estilo Landing */
+header.top{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;box-shadow:var(--shadow)}
+.top-row{max-width:1360px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:14px;margin-right:auto}
+.brand .mark{width:42px;height:42px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;box-shadow:0 2px 6px rgba(37,99,235,0.3)}
+.brand h1{font-size:19px}
+.brand span{color:var(--text-dim);font-size:13px;display:block}
+
+/* Botonera moderna tipo landing */
+.btn-group-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:var(--surface-2);color:var(--text);border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .2s ease}
+.btn:hover{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{opacity:0.9;color:#fff}
+.btn.ghost{background:transparent}
+.icon-btn{border:1px solid var(--border);background:var(--surface-2);border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
+.icon-btn:hover{border-color:var(--accent)}
+
+/* Filtros */
+.filters{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0;background:var(--surface);padding:16px 20px;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow)}
+.filters select,.filters input{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13.5px;min-width:160px;outline:none}
+.filters select:focus,.filters input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+
+/* KPIs con diseño Landing */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi .lbl{color:var(--text-dim);font-size:13px;font-weight:600}
+.kpi .val{font-size:26px;font-weight:800;margin-top:8px;letter-spacing:-.02em}
+.kpi .sub{font-size:12.5px;color:var(--text-dim);margin-top:6px}
+
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.status-pill.green{background:var(--green-bg);color:var(--green)}
+.status-pill.yellow{background:var(--yellow-bg);color:var(--yellow)}
+.status-pill.red{background:var(--red-bg);color:var(--red)}
+.status-pill.excellent{background:var(--excellent-bg);color:var(--excellent)}
+
+.kpi-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.kpi-tabs button{border:1px solid var(--border);background:var(--surface);color:var(--text-dim);border-radius:20px;padding:9px 18px;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s;box-shadow:var(--shadow)}
+.kpi-tabs button.active{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 4px 10px rgba(37,99,235,0.3)}
+
+.progress{height:8px;border-radius:4px;background:var(--surface-2);overflow:hidden;margin-top:10px;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.progress-row{display:flex;align-items:center;gap:10px}
+.progress-row .progress{flex:1;margin-top:0}
+
+.alert-banner{background:var(--red-bg);border:1px solid var(--red);border-radius:var(--radius);padding:18px;margin-bottom:20px;box-shadow:var(--shadow)}
+.alert-banner h3{color:var(--red);font-size:16px;margin-bottom:10px}
+.alert-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.alert-item:last-child{border-bottom:none}
+.alert-item .actions{display:flex;gap:8px}
+.alert-item .actions a,.alert-item .actions button{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:8px;padding:6px 12px;font-size:12px;text-decoration:none;font-weight:600}
+
+.stress-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.stress-bar select,.stress-bar input{padding:9px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:13.5px}
+
+.charts{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;margin-bottom:24px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+.card h3{font-size:16px;margin-bottom:16px}
+.card canvas{max-height:285px}
+.legend-row{display:flex;gap:16px;margin-top:16px;font-size:13px;color:var(--text-dim);flex-wrap:wrap}
+.legend-row span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+
+.table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px}
+.table-head{display:flex;justify-content:space-between;align-items:center;padding:18px 24px;border-bottom:1px solid var(--border)}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:1500px}
+th,td{padding:14px 16px;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border)}
+th{color:var(--text-dim);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em;background:var(--surface-2)}
+tbody tr:hover{background:var(--surface-2)}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.row-actions{display:flex;gap:8px}
+.row-actions button{border:none;background:transparent;color:var(--text-dim);font-size:15px;cursor:pointer}
+.row-actions button:hover{color:var(--accent)}
+
+/* Modales */
+.modal-bg{position:fixed;inset:0;background:rgba(11,15,25,0.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:18px;padding:28px;max-width:600px;width:100%;max-height:88vh;overflow:auto;border:1px solid var(--border);box-shadow:0 25px 50px -12px rgba(0,0,0,0.25)}
+.modal h2{font-size:20px;margin-bottom:6px}
+.modal .sub{font-size:13.5px;color:var(--text-dim);margin-bottom:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--text-dim);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:14px;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}
+.help{font-size:13px;color:var(--text-dim);margin-top:8px;line-height:1.5}
+.help code{font-size:12px;background:var(--surface-2);padding:2px 6px;border-radius:4px;border:1px solid var(--border)}
+.empty{padding:50px 20px;text-align:center;color:var(--text-dim);font-size:15px}
+.list{border:1px solid var(--border);border-radius:10px;margin-top:14px;max-height:220px;overflow:auto}
+.list-row{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:13.5px;border-bottom:1px solid var(--border)}
+.list-row:last-child{border-bottom:none}
+.list-row .la{color:var(--text-dim)}
+.list-row button{border:none;background:transparent;color:var(--accent);font-size:13.5px;font-weight:600;cursor:pointer;margin-left:8px}
+
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--text);color:var(--surface);padding:14px 22px;border-radius:12px;font-size:14px;font-weight:600;z-index:100;display:none;max-width:90%;box-shadow:0 15px 25px -5px rgba(0,0,0,0.3)}
+#overlay{position:fixed;inset:0;background:var(--bg);z-index:90;display:none;align-items:center;justify-content:center;font-weight:600;color:var(--text);font-size:18px}
+.only-print{display:none}
+a.btn{text-decoration:none}
+
+@media print{
+  header.top,.filters,.btn,.icon-btn,.row-actions,.no-print{display:none !important}
+  body{background:#fff;color:#000}
+  .card,.table-card,.kpi{box-shadow:none;border:1px solid #cbd5e1}
+  .wrap{padding:0}
+  .only-print{display:block !important}
+  .charts{grid-template-columns:1fr;gap:20px}
+}
+@media (max-width:850px){ .charts{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div id="toast"></div>
+<div id="overlay"><div>Generando informe ejecutivo…</div></div>
+
+<!-- Cabecera Estilo Landing Dashboard -->
+<header class="top">
+  <div class="top-row">
+    <div class="brand">
+      <div class="mark">📊</div>
+      <div>
+        <h1>Panel Comercial</h1>
+        <span>Centro de Operaciones y Ventas · <b style="color:var(--accent)">🔗 Conectado a Sheets</b></span>
+      </div>
+    </div>
+    <div class="btn-group-top no-print">
+      <button class="btn" id="btnSettings" title="Configurar umbrales">⚙️ Umbrales</button>
+      <button class="btn" id="btnVendor" title="Añadir vendedor">+ Vendedor</button>
+      <button class="btn" id="btnMeta" title="Gestionar metas">🎯 Metas</button>
+      <button class="btn" id="btnRecord" title="Nuevo registro">+ Registro</button>
+      <button class="btn" id="btnRecList" title="Historial">📋 Historial</button>
+      <button class="btn" id="btnImport" title="Importar datos">⇪ CSV</button>
+      <button class="btn" id="btnExport" title="Exportar datos">⇩ Exportar</button>
+      <button class="btn primary" id="btnReport" title="Exportar reporte visual">📤 Informe</button>
+      <button class="btn" id="btnSheet" title="Vincular con Google Sheets">🔗 Conexión</button>
+      <span class="help" id="syncStatus" style="font-size:12px;margin:0 4px"></span>
+      <span class="help" id="queueBadge" style="font-size:12px;color:var(--yellow)"></span>
+      <button class="icon-btn" id="btnTheme" title="Modo oscuro/claro">🌙</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <!-- Filtros Principales -->
+  <div class="filters no-print">
+    <input id="fSearch" placeholder="🔍 Buscar vendedor..." autocomplete="off">
+    <select id="fVendor"><option value="">Todos los vendedores</option></select>
+    <select id="fZone"><option value="">Todas las zonas</option></select>
+    <select id="fPeriod"><option value="">Todos los períodos</option></select>
+    <button class="btn ghost" id="btnClearF">Limpiar filtros</button>
+  </div>
+
+  <div id="printHeader" class="only-print">
+    <h2 id="phTitle">Informe Comercial Ejecutivo</h2>
+    <div class="meta" id="phMeta"></div>
+  </div>
+
+  <div id="alertBanner"></div>
+
+  <!-- Pestañas de KPIs tipo Landing -->
+  <div class="kpi-tabs no-print" id="kpiTabs">
+    <button data-kt="resumen" class="active">📊 Resumen Ejecutivo</button>
+    <button data-kt="financiero">💰 Financiero & Facturación</button>
+    <button data-kt="clientes">👥 Clientes & Visitas</button>
+  </div>
+  <div class="kpis" id="kpis"></div>
+
+  <!-- Tarjetas Informativas y Gráficos -->
+  <div class="table-card no-print" style="margin-bottom:24px;padding:24px">
+    <h3 style="font-size:16px;margin-bottom:6px">🎯 Venta Diaria Necesaria por Vendedor</h3>
+    <p class="help">Referencia automática basada en la meta mensual y los días hábiles del período.</p>
+    <div class="tbl-scroll" style="margin-top:14px">
+      <table id="tblDaily"><thead><tr><th>Vendedor</th><th>Período</th><th>Meta</th><th>Días hábiles</th><th>Venta diaria necesaria</th></tr></thead>
+        <tbody id="tblDailyBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:24px">
+    <h3>📈 Tendencia Mensual Histórica (Últimos 6 meses)</h3>
+    <canvas id="chartTrend"></canvas>
+    <p class="help" id="trendNote" style="margin-top:10px"></p>
+  </div>
+
+  <div class="charts">
+    <div class="card">
+      <h3>Venta Real vs Meta por Vendedor</h3>
+      <canvas id="chartBar"></canvas>
+    </div>
+    <div class="card">
+      <h3>Distribución por Estado de Rendimiento</h3>
+      <canvas id="chartPie"></canvas>
+      <div class="legend-row">
+        <span><i class="dot" style="background:var(--excellent)"></i>Excelente</span>
+        <span><i class="dot" style="background:var(--green)"></i>En Meta</span>
+        <span><i class="dot" style="background:var(--yellow)"></i>Prospección Activa</span>
+        <span><i class="dot" style="background:var(--red)"></i>Crítico</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla Detalle -->
+  <div class="table-card">
+    <div class="table-head">
+      <h3 style="font-size:16px">Detalle Consolidado por Vendedor y Mes</h3>
+      <span class="help" id="tblCount"></span>
+    </div>
+    <div class="tbl-scroll">
+      <table id="tbl">
+        <thead><tr>
+          <th>Vendedor</th><th>Zona</th><th>Período</th><th>Estado</th><th>Meta</th><th>Venta Total</th><th>Devoluciones</th><th>Venta Neta Efectiva</th>
+          <th>% Cumpl. Real</th><th>Forecast (auto)</th><th>% Cumpl. Proy.</th><th>Facturado s/IVA</th><th>Quiebre Stock</th>
+          <th>Visitados</th><th>Con Compra</th><th>% Efectividad</th><th>Nuevos</th><th class="no-print">Acciones</th>
+        </tr></thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Simulación de Estrés -->
+  <div class="table-card no-print" style="margin-top:24px;padding:24px">
+    <h3>🧪 Simulación de Escenarios de Cierre (Días Hábiles)</h3>
+    <p class="help">Modifica los días hábiles del mes para evaluar cómo cambia la exigencia diaria de ventas sin alterar las metas oficiales.</p>
+    <div class="stress-bar" style="margin-top:16px">
+      <label style="font-size:13.5px;font-weight:600">Días hábiles a simular: </label>
+      <input type="number" id="stressDias" min="1" style="width:120px">
+      <button class="btn ghost" id="stressReset" type="button">↻ Usar días reales</button>
+    </div>
+    <div class="kpis" id="stressKpis"></div>
+    <div class="tbl-scroll" style="margin-top:14px">
+      <table id="tblStress">
+        <thead><tr><th>Vendedor</th><th>Período</th><th>Meta</th><th>Días hábiles reales</th><th>Venta diaria (real)</th><th>Días simulados</th><th>Venta diaria (estresada)</th><th>Diferencia</th></tr></thead>
+        <tbody id="tblStressBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modales -->
+<div class="modal-bg" id="mVendor"><div class="modal">
+  <h2>Gestión de Vendedor</h2>
+  <input type="hidden" id="vId">
+  <div class="field"><label>Nombre completo</label><input id="vName" placeholder="Ej: Marcelo Pérez Fuentes"></div>
+  <div class="field"><label>Zona / Región</label><input id="vZone" placeholder="Ej: Zona Metropolitana"></div>
+  <div class="modal-actions">
+    <button class="btn ghost" id="vDel" style="margin-right:auto;color:var(--red)">Eliminar</button>
+    <button class="btn ghost" data-close>Cancelar</button>
+    <button class="btn primary" id="vSave">Guardar Vendedor</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="mRecord"><div class="modal">
+  <h2>Registro Diario de Operaciones</h2>
+  <div class="sub">Ingresa visitas, ventas y métricas obtenidas durante la jornada.</div>
+  <input type="hidden" id="rId">
+  <div class="grid2">
+    <div class="field"><label>Vendedor</label><select id="rVendor"></select></div>
+    <div class="field"><label>Fecha</label><input type="date" id="rDate"></div>
+    <div class="field"><label>Clientes visitados</label><input type="number" id="rVisit"></div>
+    <div class="field"><label>Venta total sin IVA ($)</label><input type="number" id="rVenta"></div>
+    <div class="field"><label>Clientes nuevos captados</label><input type="number" id="rNuevos"></div>
+    <div class="field"><label>Clientes con compra efectiva</label><input type="number" id="rCompra"></div>
+    <div class="field"><label>Facturado sin IVA ($)</label><input type="number" id="rFactura"></div>
+    <div class="field"><label>Devoluciones / rechazos ($)</label><input type="number" id="rDevol"></div>
+  </div>
+  <div class="field"><label>Observaciones</label><textarea id="rObs" rows="2"></textarea></div>
+  <div class="modal-actions">
+    <button class="btn ghost" id="rDel" style="margin-right:auto;color:var(--red)">Eliminar</button>
+    <button class="btn ghost" data-close>Cancelar</button>
+    <button class="btn primary" id="rSave">Guardar Registro</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="mMeta"><div class="modal">
+  <h2>Configuración de Meta Mensual</h2>
+  <input type="hidden" id="mId">
+  <div class="grid2">
+    <div class="field"><label>Vendedor</label><select id="mVendorSel"></select></div>
+    <div class="field"><label>Período (Mes)</label><input type="month" id="mPeriod"></div>
+  </div>
+  <div class="field"><label>Meta de venta ($)</label><input type="number" id="mMetaVenta"></div>
+  <button class="btn ghost" id="mAuto" type="button" style="margin-bottom:14px">↻ Autocompletar días hábiles</button>
+  <div class="grid2">
+    <div class="field"><label>Días hábiles del mes</label><input type="number" id="mDiasTotales"></div>
+    <div class="field"><label>Días hábiles transcurridos</label><input type="number" id="mDiasTranscurridos"></div>
+  </div>
+  <div class="modal-actions">
+    <button class="btn ghost" id="mDel" style="margin-right:auto;color:var(--red)">Eliminar</button>
+    <button class="btn ghost" data-close>Cancelar</button>
+    <button class="btn primary" id="mSave">Guardar Meta</button>
+  </div>
+  <div class="list" id="metaList"></div>
+</div></div>
+
+<div class="modal-bg" id="mSheet"><div class="modal">
+  <h2>Conectar con Google Sheet</h2>
+  <p class="help">Pega el link de tu Apps Script publicado (terminado en <code>/exec</code>).</p>
+  <div class="field"><label>URL de Aplicación Web</label><input id="sheetUrl" placeholder="https://script.google.com/macros/s/AAA.../exec"></div>
+  <div class="help" id="sheetLastSync"></div>
+  <div class="modal-actions">
+    <button class="btn ghost" id="sheetDisconnect" style="margin-right:auto;color:var(--red)">Desconectar</button>
+    <button class="btn ghost" data-close>Cerrar</button>
+    <button class="btn" id="sheetSyncNow">🔄 Sincronizar Ahora</button>
+    <button class="btn primary" id="sheetSave">Guardar Conexión</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="mSettings"><div class="modal">
+  <h2>Umbrales del Semáforo de Rendimiento</h2>
+  <div class="field"><label>% cumplimiento mínimo para clasificar "En Meta"</label><input type="number" id="sVenta"></div>
+  <div class="field"><label>Clientes nuevos mínimos para captación</label><input type="number" id="sNuevos"></div>
+  <div class="modal-actions"><button class="btn ghost" data-close>Cancelar</button><button class="btn primary" id="sSave">Guardar Umbrales</button></div>
+</div></div>
+
+<div class="modal-bg" id="mImport"><div class="modal">
+  <h2>Importación de Datos CSV</h2>
+  <div class="field"><label>Tipo de estructura</label>
+    <select id="impType"><option value="daily">Registros diarios</option><option value="metas">Metas mensuales</option></select>
+  </div>
+  <input type="file" id="fileCsv" accept=".csv">
+  <div class="modal-actions"><button class="btn ghost" data-close>Cerrar</button></div>
+</div></div>
+
+<div class="modal-bg" id="mReport"><div class="modal" style="max-width:440px">
+  <h2>Generar Informe Ejecutivo</h2>
+  <div class="field"><label>Alcance del reporte</label>
+    <select id="repScope"><option value="group">Consolidado del Equipo</option><option value="individual">Individual por Vendedor</option></select>
+  </div>
+  <div class="field" id="repVendorWrap" style="display:none"><label>Vendedor</label><select id="repVendor"></select></div>
+  <div class="modal-actions"><button class="btn ghost" data-close>Cancelar</button><button class="btn primary" id="repGo">Generar Informe</button></div>
+</div></div>
+
+<div class="modal-bg" id="mPreview"><div class="modal" style="max-width:880px">
+  <h2>Vista Previa del Informe</h2>
+  <img id="pvImg" alt="Informe" style="width:100%;border:1px solid var(--border);border-radius:10px;display:none">
+  <div class="field" style="margin-top:14px"><label>Texto para WhatsApp / Correo</label><textarea id="pvText" rows="8"></textarea></div>
+  <div class="modal-actions" style="flex-wrap:wrap;justify-content:flex-start">
+    <button class="btn primary" id="pvJpg">💾 Guardar JPG</button>
+    <button class="btn primary" id="pvPdf">📄 Guardar PDF</button>
+    <a class="btn" id="pvWA" target="_blank" rel="noopener">📲 WhatsApp</a>
+    <a class="btn" id="pvMail" target="_blank" rel="noopener">✉️ Correo</a>
+    <button class="btn" id="pvCopy">📋 Copiar Texto</button>
+    <button class="btn ghost" data-close>Cerrar</button>
+  </div>
+</div></div>
+
+<div class="modal-bg" id="mRecList"><div class="modal">
+  <h2>Historial de Registros Diarios</h2>
+  <div class="list" id="recList" style="max-height:55vh;margin-top:0"></div>
+  <div class="modal-actions"><button class="btn ghost" data-close>Cerrar</button></div>
+</div></div>
+
+<script>
+// Motor funcional 100% conservado
+const LS = { v:'sd2_vendors', r:'sd2_records', m:'sd2_metas', s:'sd2_settings', t:'sd2_theme', url:'sd2_sheeturl', dias:'sd2_diashabiles' };
+function load(k,d){ try{ const x=localStorage.getItem(k); return x?JSON.parse(x):d; }catch(e){ return d; } }
+function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+const uid = () => 'id'+Math.random().toString(36).slice(2,9);
+const $=id=>document.getElementById(id);
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function notify(msg){ const t=$('toast'); t.textContent=msg; t.style.display='block'; clearTimeout(notify._t); notify._t=setTimeout(()=>t.style.display='none',3500); }
+async function getDownloads(){ try{ return window.claude ? await window.claude.use('downloads') : null; }catch(e){ return null; } }
+let sheetUrl = load(LS.url, '');
+let diasHabilesPorPeriodo = load(LS.dias, {});
+
+let vendors = load(LS.v, [
+  {id:'v1', name:'Marcelo Pérez Fuentes', zone:'Sin zona'},
+  {id:'v2', name:'José Manuel Pérez', zone:'Sin zona'},
+  {id:'v3', name:'Krishna Olivares Hinojosa', zone:'Sin zona'}
+]);
+let dailyRecords = load(LS.r, [
+  {id:'d1', vendorId:'v1', date:'2026-09-05', clientesVisitados:8, ventaTotalSinIva:1200000, clientesNuevos:0, clientesConCompra:6, facturadoSinIva:1150000, devoluciones:20000, observaciones:''},
+  {id:'d2', vendorId:'v1', date:'2026-09-12', clientesVisitados:9, ventaTotalSinIva:1500000, clientesNuevos:1, clientesConCompra:7, facturadoSinIva:1480000, devoluciones:0, observaciones:''},
+  {id:'d3', vendorId:'v2', date:'2026-09-05', clientesVisitados:7, ventaTotalSinIva:600000, clientesNuevos:2, clientesConCompra:3, facturadoSinIva:580000, devoluciones:10000, observaciones:''}
+]);
+let metas = load(LS.m, [
+  {id:'m1', vendorId:'v1', period:'2026-09', metaVenta:10000000, diasTotales:20, diasTranscurridos:9, manual:false},
+  {id:'m2', vendorId:'v2', period:'2026-09', metaVenta:8000000, diasTotales:20, diasTranscurridos:9, manual:false},
+  {id:'m3', vendorId:'v3', period:'2026-09', metaVenta:12000000, diasTotales:20, diasTranscurridos:9, manual:false}
+]);
+let settings = load(LS.s, { ventaThreshold:90, nuevosThreshold:2 });
+let theme = load(LS.t, null);
+if(theme) document.documentElement.setAttribute('data-theme', theme);
+document.getElementById('btnTheme').textContent = (document.documentElement.getAttribute('data-theme')==='dark')?'☀️':'🌙';
+
+const fmtM = n => new Intl.NumberFormat('es-CL',{style:'currency',currency:'CLP',maximumFractionDigits:0}).format(n||0);
+const fmtP = n => (isFinite(n)?n.toFixed(1):'0.0')+'%';
+
+function isWeekday(d){ const day=d.getDay(); return day!==0 && day!==6; }
+function businessDaysInRange(start,end){ let c=0; let d=new Date(start); while(d<=end){ if(isWeekday(d)) c++; d.setDate(d.getDate()+1);} return c; }
+function periodBounds(period){ const [y,m]=period.split('-').map(Number); return {start:new Date(y,m-1,1), end:new Date(y,m,0)}; }
+function autoBusinessDays(period){ if(!period) return 0; const {start,end}=periodBounds(period); return businessDaysInRange(start,end); }
+function autoElapsedDays(period){ if(!period) return 0; const {start,end}=periodBounds(period); const today=new Date(); today.setHours(0,0,0,0);
+  if(today<start) return 0; const cap = today<end? today: end; return businessDaysInRange(start,cap); }
+
+function statusOf(cumplReal, nuevos){
+  const ventaOk = cumplReal >= settings.ventaThreshold;
+  const nuevosOk = (nuevos||0) >= settings.nuevosThreshold;
+  if(ventaOk && nuevosOk) return {level:'excellent', label:'Excelente', desc:'Cumple venta y capta clientes', icon:'🟢'};
+  if(ventaOk) return {level:'green', label:'En Meta', desc:'Cumple volumen de venta', icon:'🟢'};
+  if(nuevosOk) return {level:'yellow', label:'Prospección Activa', desc:'Captando nuevos clientes', icon:'🟡'};
+  return {level:'red', label:'Crítico', desc:'Bajo en ventas y captación', icon:'🚨'};
+}
+
+function normalize(s){ return (s||'').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,''); }
+function findVendor(name){ return vendors.find(x=>normalize(x.name)===normalize(name)); }
+function vendorSlugId(name){ return 'v_'+normalize(name); }
+function upsertVendorByName(name, zone){
+  let v = findVendor(name);
+  if(!v){ v={id:vendorSlugId(name), name:(name||'').trim(), zone:zone||''}; vendors.push(v); }
+  else if(zone) v.zone = zone;
+  return v;
+}
+
+function setSyncStatus(msg){ $('syncStatus').textContent = msg; }
+async function syncFromSheet(showToast){
+  if(!sheetUrl){ setSyncStatus(''); return; }
+  try{
+    const res = await fetch(sheetUrl + (sheetUrl.includes('?')?'&':'?') + 't=' + Date.now());
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error||'Respuesta inválida');
+    (data.records||[]).forEach(r=>{
+      const v = upsertVendorByName(r.vendedor, r.zona);
+      const id = 'r_'+v.id+'_'+r.fecha;
+      const rec = { id, vendorId:v.id, date:r.fecha, clientesVisitados:r.visitados, ventaTotalSinIva:r.ventaTotal,
+        clientesNuevos:r.clientesNuevos, clientesConCompra:r.clientesCompra, facturadoSinIva:r.facturado,
+        devoluciones:r.devolucion, observaciones:r.observaciones||'' };
+      const idx = dailyRecords.findIndex(x=>x.id===id);
+      if(idx>=0) dailyRecords[idx]=rec; else dailyRecords.push(rec);
+    });
+    (data.metas||[]).forEach(m=>{
+      const v = upsertVendorByName(m.vendedor, '');
+      const id = 'm_'+v.id+'_'+m.periodo;
+      const ex = metas.find(x=>x.id===id);
+      if(ex){ ex.metaVenta = m.metaVenta; }
+      else{ metas.push({ id, vendorId:v.id, period:m.periodo, metaVenta:m.metaVenta,
+        diasTotales:autoBusinessDays(m.periodo), diasTranscurridos:0, manual:false }); }
+    });
+    (data.diasHabiles||[]).forEach(d=>{ if(d.periodo && d.dias>0) diasHabilesPorPeriodo[d.periodo]=d.dias; });
+    save(LS.v, vendors); save(LS.r, dailyRecords); save(LS.m, metas); save(LS.dias, diasHabilesPorPeriodo);
+    setSyncStatus('✅ Sincronizado');
+    if(showToast) notify('Datos actualizados desde Google Sheet');
+    render();
+  }catch(e){ setSyncStatus('⚠️ Sin conexión'); if(showToast) notify('No se pudo sincronizar.'); }
+}
+
+function pushRecordToSheet(vendorName, zone, data){
+  if(!sheetUrl) return;
+  fetch(sheetUrl, { method:'POST', body: JSON.stringify({ action:'record', vendedor:vendorName, zona:zone, fecha:data.date,
+    visitados:data.clientesVisitados, ventaTotal:data.ventaTotalSinIva, clientesNuevos:data.clientesNuevos, clientesCompra:data.clientesConCompra,
+    facturado:data.facturadoSinIva, devolucion:data.devoluciones, quiebre:Math.max((data.ventaTotalSinIva||0)-(data.facturadoSinIva||0),0),
+    observaciones:data.observaciones }) }).catch(()=>{});
+}
+function pushMetaToSheet(vendorName, period, metaVenta){
+  if(!sheetUrl) return;
+  fetch(sheetUrl, { method:'POST', body: JSON.stringify({ action:'meta', vendedor:vendorName, periodo:period, metaVenta }) }).catch(()=>{});
+}
+
+$('btnSheet').onclick=()=>{ $('sheetUrl').value=sheetUrl; $('sheetLastSync').textContent = sheetUrl?'Conectado.':'No conectado.'; openModal('mSheet'); };
+$('sheetSave').onclick=()=>{
+  sheetUrl=$('sheetUrl').value.trim(); save(LS.url, sheetUrl);
+  notify(sheetUrl?'Google Sheet conectada':'Desconectado'); closeModal('mSheet'); syncFromSheet(true);
+};
+$('sheetSyncNow').onclick=()=>syncFromSheet(true);
+$('sheetDisconnect').onclick=()=>{ sheetUrl=''; save(LS.url,''); $('sheetUrl').value=''; setSyncStatus(''); notify('Desconectado'); };
+
+function populateSelects(rows){
+  const zones=[...new Set(vendors.map(v=>v.zone).filter(Boolean))];
+  const periods=[...new Set(rows.map(r=>r.period))].sort().reverse();
+  const fv=document.getElementById('fVendor'), fz=document.getElementById('fZone'), fp=document.getElementById('fPeriod');
+  const cur={v:fv.value,z:fz.value,p:fp.value};
+  fv.innerHTML='<option value="">Todos los vendedores</option>'+vendors.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
+  fz.innerHTML='<option value="">Todas las zonas</option>'+zones.map(z=>`<option value="${esc(z)}">${esc(z)}</option>`).join('');
+  fp.innerHTML='<option value="">Todos los períodos</option>'+periods.map(p=>`<option value="${p}">${p}</option>`).join('');
+  fv.value=cur.v; fz.value=cur.z; fp.value=cur.p;
+  const opts=vendors.map(v=>`<option value="${v.id}">${esc(v.name)}</option>`).join('');
+  ['rVendor','mVendorSel','repVendor'].forEach(id=>{ const el=document.getElementById(id); const prev=el.value; el.innerHTML=opts; if(prev && vendors.some(v=>v.id===prev)) el.value=prev; });
+}
+
+function aggregateRows(){
+  const map={}; const key=(a,b)=>a+'|'+b;
+  const blank=(vid,p)=>({vendorId:vid,period:p,visit:0,venta:0,nuevos:0,compra:0,factura:0,devol:0});
+  dailyRecords.forEach(r=>{ const p=r.date?r.date.slice(0,7):''; const k=key(r.vendorId,p); const a=map[k]||(map[k]=blank(r.vendorId,p));
+    a.visit+=r.clientesVisitados||0; a.venta+=r.ventaTotalSinIva||0; a.nuevos+=r.clientesNuevos||0; a.compra+=r.clientesConCompra||0;
+    a.factura+=r.facturadoSinIva||0; a.devol+=r.devoluciones||0; });
+  metas.forEach(m=>{ const k=key(m.vendorId,m.period); if(!map[k]) map[k]=blank(m.vendorId,m.period); });
+  return Object.values(map).map(row=>{
+    const v=vendors.find(x=>x.id===row.vendorId);
+    const m=metas.find(x=>x.vendorId===row.vendorId && x.period===row.period);
+    const total = diasHabilesPorPeriodo[row.period] || (m ? (m.diasTotales||autoBusinessDays(row.period)) : autoBusinessDays(row.period));
+    const elapsed = (m && m.manual) ? m.diasTranscurridos : autoElapsedDays(row.period);
+    const metaVenta = m ? m.metaVenta : 0;
+    const ventaNeta = Math.max(row.factura - row.devol, 0);
+    const cumplReal = metaVenta>0 ? ventaNeta/metaVenta*100 : 0;
+    const forecast = elapsed>0 ? (ventaNeta/elapsed)*total : 0;
+    const cumplProy = metaVenta>0 ? forecast/metaVenta*100 : 0;
+    const efect = row.visit>0 ? row.compra/row.visit*100 : 0;
+    const ventaDiariaNecesaria = (metaVenta>0 && total>0) ? metaVenta/total : 0;
+    return { vendorId:row.vendorId, vendorName:v?v.name:'—', zone:v?v.zone:'—', period:row.period, meta:metaVenta, venta:row.venta, devol:row.devol, ventaNeta,
+      cumplReal, forecast, cumplProy, factura:row.factura, quiebre:Math.max(row.venta-row.factura,0), visit:row.visit, compra:row.compra, efect, nuevos:row.nuevos,
+      diasTotales:total, ventaDiariaNecesaria, status:statusOf(cumplReal,row.nuevos) };
+  });
+}
+
+let lastAggregated = [];
+function filteredRows(){
+  const all = lastAggregated.length ? lastAggregated : aggregateRows();
+  const q = normalize(($('fSearch')||{}).value||'');
+  const fv=document.getElementById('fVendor').value, fz=document.getElementById('fZone').value, fp=document.getElementById('fPeriod').value;
+  return all.filter(r=>{
+    if(fv && r.vendorId!==fv) return false;
+    if(fz && r.zone!==fz) return false;
+    if(fp && r.period!==fp) return false;
+    if(q && !normalize(r.vendorName).includes(q)) return false;
+    return true;
+  });
+}
+
+let barChart, pieChart, trendChart;
+let kpiGroups = {}, kpiTab = 'resumen';
+function renderKpis(){
+  $('kpis').innerHTML = kpiGroups[kpiTab] || '';
+  document.querySelectorAll('#kpiTabs button').forEach(b=>b.classList.toggle('active', b.dataset.kt===kpiTab));
+}
+document.querySelectorAll('#kpiTabs button').forEach(b=>b.onclick=()=>{ kpiTab=b.dataset.kt; renderKpis(); });
+function kpi(lbl,val,sub){ return `<div class="kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`; }
+function kpiBar(lbl,val,sub,pct){
+  const p=Math.max(0,Math.min(pct,100));
+  const color = pct>=100?'var(--green)':(pct>=70?'var(--accent)':(pct>=40?'var(--yellow)':'var(--red)'));
+  return `<div class="kpi"><div class="lbl">${lbl}</div><div class="val">${val}</div>
+    <div class="progress"><div class="progress-fill" style="width:${p}%;background:${color}"></div></div>
+    ${sub?`<div class="sub">${sub}</div>`:''}</div>`;
+}
+function pillsHTML(c){ return `<span class="status-pill excellent">🟢 Exc. ${c.excellent}</span> <span class="status-pill green">🟢 Meta ${c.green}</span> <span class="status-pill yellow">🟡 ${c.yellow}</span> <span class="status-pill red">🚨 ${c.red}</span>`; }
+function totalsOf(rows){
+  const t={meta:0,venta:0,devol:0,neta:0,forecast:0,quiebre:0,factura:0,visit:0,compra:0,nuevos:0};
+  rows.forEach(r=>{ t.meta+=r.meta; t.venta+=r.venta; t.devol+=r.devol; t.neta+=r.ventaNeta; t.forecast+=r.forecast; t.quiebre+=r.quiebre; t.factura+=r.factura; t.visit+=r.visit; t.compra+=r.compra; t.nuevos+=r.nuevos; });
+  t.cumplReal=t.meta>0?t.neta/t.meta*100:0; t.cumplProy=t.meta>0?t.forecast/t.meta*100:0; t.efect=t.visit>0?t.compra/t.visit*100:0;
+  return t;
+}
+function render(){
+  const all=aggregateRows(); lastAggregated=all; populateSelects(all);
+  const rows=filteredRows(); const t=totalsOf(rows);
+  const counts={excellent:0,green:0,yellow:0,red:0}; rows.forEach(r=>counts[r.status.level]++);
+  const estadoCard = `<div class="kpi"><div class="lbl">Estado del Equipo</div><div class="val" style="font-size:13px;display:flex;flex-wrap:wrap;gap:4px;margin-top:8px">${pillsHTML(counts)}</div></div>`;
+  kpiGroups = {
+    resumen:
+      kpi('Meta Consolidada',fmtM(t.meta)) +
+      kpi('Forecast Cierre',fmtM(t.forecast),fmtP(t.cumplProy)+' proyectado') +
+      kpiBar('% Cumplimiento Real',fmtP(t.cumplReal),'Venta Neta: '+fmtM(t.neta),t.cumplReal) +
+      estadoCard,
+    financiero:
+      kpi('Venta Total',fmtM(t.venta)) +
+      kpi('Venta Facturada',fmtM(t.factura)) +
+      kpi('Quiebre de Stock',fmtM(t.quiebre)) +
+      kpi('Devoluciones',fmtM(t.devol)) +
+      kpi('Venta Neta Efectiva',fmtM(t.neta)),
+    clientes:
+      kpi('Clientes Visitados',t.visit) + kpi('Compras Efectivas',t.compra) +
+      kpi('% Efectividad',fmtP(t.efect)) + kpi('Clientes Nuevos',t.nuevos)
+  };
+  renderKpis();
+
+  const by={}; rows.forEach(r=>{ const b=by[r.vendorName]||(by[r.vendorName]={meta:0,neta:0}); b.meta+=r.meta; b.neta+=r.ventaNeta; });
+  const labels=Object.keys(by);
+  try{
+    if(barChart){barChart.destroy();barChart=null;} if(pieChart){pieChart.destroy();pieChart=null;}
+    barChart=new Chart($('chartBar'),{type:'bar',data:{labels,datasets:[{label:'Meta',data:labels.map(l=>by[l].meta),backgroundColor:'#94A3B8',borderRadius:6},{label:'Venta neta',data:labels.map(l=>by[l].neta),backgroundColor:'#2563EB',borderRadius:6}]},options:{responsive:true,animation:false,plugins:{legend:{position:'bottom'}},scales:{y:{ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}}}}});
+    pieChart=new Chart($('chartPie'),{type:'pie',data:{labels:['Excelente','En Meta','Prospección Activa','Crítico'],datasets:[{data:[counts.excellent,counts.green,counts.yellow,counts.red],backgroundColor:['#0D9488','#16A34A','#EAB308','#DC2626']}]},options:{responsive:true,animation:false,plugins:{legend:{display:false}}}});
+    renderTrend();
+  }catch(e){}
+
+  const tb=$('tblBody');$('tblCount').textContent=rows.length+' registro(s)';
+  if(rows.length===0){ tb.innerHTML='<tr><td colspan="18"><div class="empty">Sin datos registrados.</div></td></tr>'; }
+  else{
+    tb.innerHTML=rows.sort((a,b)=>a.vendorName.localeCompare(b.vendorName)||b.period.localeCompare(a.period)).map(r=>`<tr>
+      <td>${esc(r.vendorName)}</td><td>${esc(r.zone)||'—'}</td><td>${r.period||'—'}</td>
+      <td><span class="status-pill ${r.status.level}">${r.status.icon} ${r.status.label}</span></td>
+      <td class="num">${fmtM(r.meta)}</td><td class="num">${fmtM(r.venta)}</td><td class="num">${fmtM(r.devol)}</td><td class="num">${fmtM(r.ventaNeta)}</td>
+      <td class="num"><div class="progress-row" style="min-width:90px"><span>${fmtP(r.cumplReal)}</span><div class="progress"><div class="progress-fill" style="width:${Math.max(0,Math.min(r.cumplReal,100))}%;background:${r.cumplReal>=100?'var(--green)':(r.cumplReal>=70?'var(--accent)':(r.cumplReal>=40?'var(--yellow)':'var(--red)'))}"></div></div></div></td><td class="num">${fmtM(r.forecast)}</td><td class="num">${fmtP(r.cumplProy)}</td>
+      <td class="num">${fmtM(r.factura)}</td><td class="num">${fmtM(r.quiebre)}</td>
+      <td class="num">${r.visit}</td><td class="num">${r.compra}</td><td class="num">${fmtP(r.efect)}</td><td class="num">${r.nuevos}</td>
+      <td class="no-print"><div class="row-actions"><button data-editv="${r.vendorId}" title="Editar vendedor">👤</button><button data-editm="${r.vendorId}|${r.period}" title="Editar meta">🎯</button></div></td></tr>`).join('');
+    tb.querySelectorAll('[data-editv]').forEach(b=>b.onclick=()=>openVendorEdit(b.dataset.editv));
+    tb.querySelectorAll('[data-editm]').forEach(b=>b.onclick=()=>{ const [vid,p]=b.dataset.editm.split('|'); openMetaEdit(vid,p); });
+  }
+  renderDaily(rows);
+  renderStress();
+}
+
+function renderTrend(){
+  const fv=$('fVendor').value, fz=$('fZone').value;
+  const all = aggregateRows().filter(r=>{
+    if(fv && r.vendorId!==fv) return false;
+    if(fz && r.zone!==fz) return false;
+    return true;
+  });
+  const periods = [...new Set(all.map(r=>r.period).filter(Boolean))].sort().slice(-6);
+  const byPeriod = {};
+  periods.forEach(p=>byPeriod[p]={meta:0,neta:0});
+  all.forEach(r=>{ if(byPeriod[r.period]){ byPeriod[r.period].meta+=r.meta; byPeriod[r.period].neta+=r.ventaNeta; } });
+  if(trendChart){ trendChart.destroy(); trendChart=null; }
+  if(periods.length===0){ $('trendNote').textContent='Sin suficientes datos de tendencia.'; return; }
+  try{
+    trendChart = new Chart($('chartTrend'), { type:'line', data:{ labels:periods,
+      datasets:[
+        {label:'Meta', data:periods.map(p=>byPeriod[p].meta), borderColor:'#94A3B8', tension:.2, borderDash:[4,4]},
+        {label:'Venta Neta', data:periods.map(p=>byPeriod[p].neta), borderColor:'#2563EB', tension:.2}
+      ]}, options:{responsive:true, animation:false, plugins:{legend:{position:'bottom'}}, scales:{y:{ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}}}} });
+  }catch(e){}
+}
+
+function renderDaily(rows){
+  const tb=$('tblDailyBody');
+  if(rows.length===0){ tb.innerHTML='<tr><td colspan="5"><div class="empty">Sin datos.</div></td></tr>'; return; }
+  tb.innerHTML = rows.slice().sort((a,b)=>a.vendorName.localeCompare(b.vendorName)||b.period.localeCompare(a.period)).map(r=>`<tr>
+    <td>${esc(r.vendorName)}</td><td>${r.period||'—'}</td><td class="num">${fmtM(r.meta)}</td><td class="num">${r.diasTotales}</td>
+    <td class="num"><b>${fmtM(r.ventaDiariaNecesaria)}</b>/día</td></tr>`).join('');
+}
+
+function renderStress(){
+  const rows=filteredRows();
+  if(!renderStress._touched){
+    const ref = rows.find(r=>r.diasTotales>0);
+    $('stressDias').value = ref ? ref.diasTotales : (autoBusinessDays($('fPeriod').value||new Date().toISOString().slice(0,7))||22);
+  }
+  const diasSim = +$('stressDias').value || 1;
+  let totMeta=0, totRealDia=0, totEstDia=0;
+  const trs = rows.map(r=>{
+    const realDia = r.ventaDiariaNecesaria;
+    const estDia = r.meta>0 ? r.meta/diasSim : 0;
+    totMeta+=r.meta; totRealDia+=realDia; totEstDia+=estDia;
+    return `<tr><td>${esc(r.vendorName)}</td><td>${r.period||'—'}</td><td class="num">${fmtM(r.meta)}</td><td class="num">${r.diasTotales}</td>
+      <td class="num">${fmtM(realDia)}</td><td class="num">${diasSim}</td><td class="num"><b>${fmtM(estDia)}</b></td>
+      <td class="num" style="color:${estDia>realDia?'var(--red)':'var(--text)'}">${estDia>realDia?'+':''}${fmtM(estDia-realDia)}</td></tr>`;
+  });
+  $('tblStressBody').innerHTML = trs.length?trs.join(''):'<tr><td colspan="8"><div class="empty">Sin datos.</div></td></tr>';
+  $('stressKpis').innerHTML =
+    kpi('Meta Total',fmtM(totMeta)) +
+    kpi('Diaria Real',fmtM(totRealDia)) +
+    kpi('Diaria Estresada',fmtM(totEstDia)) +
+    kpi('Diferencia',fmtM(totEstDia-totRealDia));
+}
+$('stressDias').addEventListener('input', ()=>{ renderStress._touched=true; renderStress(); });$('stressReset').onclick=()=>{ renderStress._touched=false; renderStress(); };
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('.modal-bg').classList.remove('open'));
+document.querySelectorAll('.modal-bg').forEach(m=>m.onclick=e=>{ if(e.target===m) m.classList.remove('open'); });
+
+$('btnVendor').onclick=()=>{ $('vId').value='';$('vName').value=''; $('vZone').value='';$('vDel').style.display='none'; openModal('mVendor'); };
+function openVendorEdit(id){ const v=vendors.find(x=>x.id===id); if(!v) return; $('vId').value=id; $('vName').value=v.name; $('vZone').value=v.zone; $('vDel').style.display='inline-block'; openModal('mVendor'); }$('vSave').onclick=()=>{
+  const id=$('vId').value, name=$('vName').value.trim(), zone=$('vZone').value.trim();
+  if(!name) return notify('Ingresa el nombre');
+  if(id){ const v=vendors.find(x=>x.id===id); v.name=name; v.zone=zone; } else { vendors.push({id:uid(), name, zone}); }
+  save(LS.v, vendors); closeModal('mVendor'); render();
+};
+$('vDel').onclick=()=>{
+  const id=$('vId').value; if(!id) return;
+  vendors=vendors.filter(x=>x.id!==id); dailyRecords=dailyRecords.filter(x=>x.vendorId!==id); metas=metas.filter(x=>x.vendorId!==id);
+  save(LS.v, vendors); save(LS.r, dailyRecords); save(LS.m, metas); closeModal('mVendor'); render();
+};
+
+$('btnRecord').onclick=()=>{
+  if(vendors.length===0) return notify('Agrega un vendedor primero');
+  ['rId','rVisit','rVenta','rNuevos','rCompra','rFactura','rDevol','rObs'].forEach(id=>$(id).value='');
+  $('rDate').value = new Date().toISOString().slice(0,10);$('rDel').style.display='none'; openModal('mRecord');
+};
+$('rSave').onclick=()=>{
+  const id=$('rId').value;
+  const data={ vendorId:$('rVendor').value, date:$('rDate').value,
+    clientesVisitados:+document.getElementById('rVisit').value||0, ventaTotalSinIva:+document.getElementById('rVenta').value||0,
+    clientesNuevos:+document.getElementById('rNuevos').value||0, clientesConCompra:+document.getElementById('rCompra').value||0,
+    facturadoSinIva:+document.getElementById('rFactura').value||0, devoluciones:+document.getElementById('rDevol').value||0,
+    observaciones:$('rObs').value };
+  if(!data.date) return notify('Selecciona la fecha');
+  if(id){ Object.assign(dailyRecords.find(x=>x.id===id), data); } else { dailyRecords.push({id:uid(), ...data}); }
+  save(LS.r, dailyRecords); closeModal('mRecord'); render();
+  const v=vendors.find(x=>x.id===data.vendorId);
+  if(v && sheetUrl) pushRecordToSheet(v.name, v.zone, data);
+};
+$('rDel').onclick=()=>{ const id=$('rId').value; if(!id) return; dailyRecords=dailyRecords.filter(x=>x.id!==id); save(LS.r,dailyRecords); closeModal('mRecord'); render(); };
+
+function renderMetaList(){
+  $('metaList').innerHTML = metas.length? metas.slice().sort((a,b)=>b.period.localeCompare(a.period)).map(m=>{
+    const v=vendors.find(x=>x.id===m.vendorId);
+    return `<div class="list-row"><span>${esc(v?v.name:'—')} <span class="la">· ${m.period} · ${fmtM(m.metaVenta)}</span></span><button data-em="${m.vendorId}|${m.period}">Editar</button></div>`;
+  }).join('') : '<div class="list-row la">Sin metas.</div>';
+  $('metaList').querySelectorAll('[data-em]').forEach(b=>b.onclick=()=>{ const [vid,p]=b.dataset.em.split('|'); openMetaEdit(vid,p); });
+}
+$('btnMeta').onclick=()=>{
+  if(vendors.length===0) return notify('Agrega un vendedor primero');
+  const p=new Date().toISOString().slice(0,7);
+  $('mId').value=''; $('mMetaVenta').value='';$('mPeriod').value=p;
+  $('mDiasTotales').value=autoBusinessDays(p); $('mDiasTranscurridos').value='';$('mDel').style.display='none'; renderMetaList(); openModal('mMeta');
+};
+function openMetaEdit(vendorId,period){
+  const m=metas.find(x=>x.vendorId===vendorId && x.period===period);
+  $('mId').value=m?m.id:''; $('mVendorSel').value=vendorId; $('mPeriod').value=period; $('mMetaVenta').value=m?m.metaVenta:0;
+  $('mDiasTotales').value=m?m.diasTotales:autoBusinessDays(period);
+  $('mDiasTranscurridos').value=(m&&m.manual)?m.diasTranscurridos:'';$('mDel').style.display=m?'inline-block':'none';
+  renderMetaList(); openModal('mMeta');
+}
+$('mAuto').onclick=()=>{ const p=$('mPeriod').value; $('mDiasTotales').value=autoBusinessDays(p); $('mDiasTranscurridos').value=''; };$('mSave').onclick=()=>{
+  const vendorId=$('mVendorSel').value, period=$('mPeriod').value;
+  if(!period) return notify('Selecciona período');
+  const tr=$('mDiasTranscurridos').value;
+  const data={ vendorId, period, metaVenta:+$('mMetaVenta').value\vert{}\vert{}0, diasTotales:+$('mDiasTotales').value||autoBusinessDays(period),
+    diasTranscurridos: tr===''?0:+tr, manual: tr!=='' };
+  const ex=metas.find(x=>x.vendorId===vendorId && x.period===period);
+  if(ex){ Object.assign(ex,data); } else { metas.push({id:uid(), ...data}); }
+  save(LS.m, metas); closeModal('mMeta'); render();
+  const v=vendors.find(x=>x.id===vendorId);
+  if(v && sheetUrl) pushMetaToSheet(v.name, period, data.metaVenta);
+};
+$('mDel').onclick=()=>{
+  const vendorId=$('mVendorSel').value, period=$('mPeriod').value;
+  metas = metas.filter(x=>!(x.vendorId===vendorId && x.period===period)); save(LS.m, metas); closeModal('mMeta'); render();
+};
+
+$('btnSettings').onclick=()=>{$('sVenta').value=settings.ventaThreshold; $('sNuevos').value=settings.nuevosThreshold; openModal('mSettings'); };$('sSave').onclick=()=>{ settings.ventaThreshold=+document.getElementById('sVenta').value||90; settings.nuevosThreshold=+document.getElementById('sNuevos').value||2; save(LS.s, settings); closeModal('mSettings'); render(); };
+
+document.getElementById('btnImport').onclick=()=>openModal('mImport');
+document.getElementById('fileCsv').onchange=(e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{ notify('Archivo procesado con éxito.'); closeModal('mImport'); };
+  reader.readAsText(file);
+};
+
+document.getElementById('btnExport').onclick=async()=>{
+  const headers=['vendedor','zona','fecha','clientesVisitados','ventaTotalSinIva','clientesNuevos','clientesConCompra','facturadoSinIva','devoluciones','observaciones'];
+  const rows=dailyRecords.map(r=>{ const v=vendors.find(x=>x.id===r.vendorId)||{}; return [v.name,v.zone,r.date,r.clientesVisitados,r.ventaTotalSinIva,r.clientesNuevos,r.clientesConCompra,r.facturadoSinIva,r.devoluciones,'"'+(r.observaciones||'').replace(/"/g,'""')+'"'].join(','); });
+  const csv=[headers.join(','), ...rows].join('\n');
+  const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='export_'+new Date().toISOString().slice(0,10)+'.csv'; document.body.appendChild(a); a.click(); a.remove();
+};
+
+function buildMessageText(isInd, vendorId){
+  const t=totalsOf(filteredRows()); const per=$('fPeriod').value||'Todos';
+  if(isInd){
+    const v=vendors.find(x=>x.id===vendorId);
+    return [`📊 *INFORME COMERCIAL - ${v?v.name:''}*`,`📅 *Período:* ${per}`,`🎯 *Meta:* ${fmtM(t.meta)}`,`✅ *Venta Neta:* ${fmtM(t.neta)} (${fmtP(t.cumplReal)})`].join('\n');
+  }
+  return [`📊 *INFORME CONSOLIDADO EQUIPO*`,`📅 *Período:* ${per}`,`🎯 *Meta:* ${fmtM(t.meta)}`,`✅ *Venta Neta:* ${fmtM(t.neta)} (${fmtP(t.cumplReal)})`].join('\n');
+}
+
+let lastCanvas=null;
+$('btnReport').onclick=()=>openModal('mReport');$('repScope').onchange=(e)=>{ $('repVendorWrap').style.display=e.target.value==='individual'?'block':'none'; };$('repGo').onclick=async()=>{
+  const isInd=$('repScope').value==='individual', vid=$('repVendor').value;
+  const prevV=$('fVendor').value, prevTheme=document.documentElement.getAttribute('data-theme');
+  if(isInd){ $('fVendor').value=vid; }
+  render();
+  const text=buildMessageText(isInd,vid);
+  closeModal('mReport'); $('overlay').style.display='flex';
+  lastCanvas=null; const img=$('pvImg'); img.style.display='none';
+  try{
+    document.documentElement.setAttribute('data-theme','light');
+    document.body.classList.add('capturing'); window.scrollTo(0,0);
+    $('kpis').innerHTML = Object.values(kpiGroups).join('');
+    await new Promise(r=>setTimeout(r,800));
+    lastCanvas=await html2canvas(document.querySelector('.wrap'),{scale:2,useCORS:true,backgroundColor:'#F8FAFC',windowWidth:1200});
+    img.src=lastCanvas.toDataURL('image/jpeg',0.9); img.style.display='block';
+  }catch(e){ notify('No se pudo generar la imagen.'); }
+  finally{
+    document.body.classList.remove('capturing'); renderKpis();
+    if(prevTheme) document.documentElement.setAttribute('data-theme',prevTheme); else document.documentElement.removeAttribute('data-theme');
+    $('overlay').style.display='none';
+    if(isInd){ $('fVendor').value=prevV; render(); }
+  }
+  $('pvText').value=text;
+  $('pvWA').href='https://api.whatsapp.com/send?text='+encodeURIComponent(text);
+  $('pvMail').href='mailto:?subject=Informe Ejecutivo&body='+encodeURIComponent(text);
+  openModal('mPreview');
+};
+$('pvJpg').onclick=()=>{ if(!lastCanvas) return; lastCanvas.toBlob(b=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='informe-ejecutivo.jpg'; a.click(); },'image/jpeg',0.92); };$('pvPdf').onclick=async()=>{
+  if(!lastCanvas) return;
+  if(!(window.jspdf&&window.jspdf.jsPDF)) return;
+  const w=lastCanvas.width,h=lastCanvas.height;
+  const pdf=new window.jspdf.jsPDF({orientation:w>h?'l':'p',unit:'px',format:[w,h],compress:true});
+  pdf.addImage(lastCanvas.toDataURL('image/jpeg',0.92),'JPEG',0,0,w,h);
+  const blob = pdf.output('blob');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='informe-ejecutivo.pdf'; a.click();
+};
+$('pvCopy').onclick=async()=>{ await navigator.clipboard.writeText($('pvText').value); notify('Texto copiado al portapapeles'); };
+
+function recFiltered(){
+  const fv=$('fVendor').value,fz=$('fZone').value,fp=$('fPeriod').value;
+  return dailyRecords.filter(r=>{ const v=vendors.find(x=>x.id===r.vendorId); if(!v) return false; if(fv&&r.vendorId!==fv) return false; if(fz&&v.zone!==fz) return false; if(fp&&(r.date||'').slice(0,7)!==fp) return false; return true; })
+    .sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+}
+function renderRecList(){
+  const rs=recFiltered().slice(0,300);
+  $('recList').innerHTML=rs.length?rs.map(r=>{ const v=vendors.find(x=>x.id===r.vendorId); return `<div class="list-row"><span>${r.date} · ${esc(v.name)} <span class="la">· ${fmtM(r.ventaTotalSinIva)}</span></span><button data-er="${r.id}">Editar</button></div>`; }).join(''):'<div class="list-row la">Sin registros.</div>';
+  $('recList').querySelectorAll('[data-er]').forEach(b=>b.onclick=()=>openRecordEdit(b.dataset.er));
+}
+function openRecordEdit(id){
+  const r=dailyRecords.find(x=>x.id===id); if(!r) return;
+  $('rId').value=r.id; $('rVendor').value=r.vendorId; $('rDate').value=r.date; $('rVisit').value=r.clientesVisitados; $('rVenta').value=r.ventaTotalSinIva;
+  $('rNuevos').value=r.clientesNuevos; $('rCompra').value=r.clientesConCompra; $('rFactura').value=r.facturadoSinIva; $('rDevol').value=r.devoluciones;
+  $('rObs').value=r.observaciones\vert{}\vert{}'';$('rDel').style.display='inline-block';
+  closeModal('mRecList'); openModal('mRecord');
+}
+$('btnRecList').onclick=()=>{ renderRecList(); openModal('mRecList'); };
+
+document.getElementById('btnClearF').onclick=()=>{ $('fSearch').value=''; document.getElementById('fVendor').value=''; document.getElementById('fZone').value=''; document.getElementById('fPeriod').value=''; render(); };
+['fVendor','fZone','fPeriod'].forEach(id=>document.getElementById(id).addEventListener('change', render));
+$('fSearch').addEventListener('input', render);
+document.getElementById('btnTheme').onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme'); const next = cur==='dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next); save(LS.t, next);
+  document.getElementById('btnTheme').textContent = next==='dark' ? '☀️' : '🌙';
+};
+
+render();
+if(sheetUrl) syncFromSheet(false);
+</script>
+</body>
+</html>
